@@ -124,8 +124,8 @@ of the project, see below.
 
 - create custom DB indexes
 
-        psql -d tilery -c "CREATE INDEX IF NOT EXISTS idx_road_label ON osm_roads USING GIST(geometry) WHERE name!='' OR ref!=''"
-        psql -d tilery -c "CREATE INDEX IF NOT EXISTS idx_boundary_low ON osm_admin USING GIST(geometry) WHERE admin_level IN (3, 4)"
+        psql -d tilery -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_road_label ON osm_roads USING GIST(geometry) WHERE name!='' OR ref!=''" &
+        psql -d tilery -c "CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_boundary_low ON osm_admin USING GIST(geometry) WHERE admin_level IN (3, 4)" &
 
 - in renderd configuration file (/etc/renderd.conf) add one section for any
   flavour/language you want to support:
