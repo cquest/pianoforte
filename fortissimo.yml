@@ -1,0 +1,530 @@
+scale: 1
+metatile: 8
+name: "Forte"
+bounds: &world
+  - -180
+  - -85.05112877980659
+  - 180
+  - 85.05112877980659
+center:
+  - 2.3427
+  - 48.8662
+  - 5
+format: "png"
+interactivity: false
+minzoom: 9
+maxzoom: 18
+srs: &merc "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over"
+extents: &extents
+  extent: *world
+  srs-name: "900913"
+  srs: *merc
+extents84: &extents84
+  extent: *world
+  srs-name: "WGS84"
+  srs: "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+db: &db
+  dbname: tilery
+  geometry_field: geometry
+  type: postgis
+  extent: -20037508,-19929239,20037508,19929239
+  password: null
+  user: tilery
+  host: ''
+
+Stylesheet:
+- base.mss
+- forte/base.mss
+- admin.mss
+- forte/roads.mss
+- labels.mss
+- forte/labels.mss
+- forte/poi.mss
+
+Layer:
+
+- id: oceans-low
+  class: ""
+  geometry: "polygon"
+  <<: *extents
+  Datasource:
+    <<: *db
+    geometry_field: geometry
+    table: simplified_water_polygons
+
+- id: oceans
+  class: ""
+  geometry: "polygon"
+  <<: *extents
+  Datasource:
+    <<: *db
+    geometry_field: geometry
+    table: water_polygons
+
+- id: landuse
+  class: ""
+  geometry: "polygon"
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type
+        FROM
+          osm_landusages
+        ORDER BY
+          area DESC
+      ) AS data
+
+- id: landuse_gen
+  class: ""
+  geometry: "polygon"
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type
+        FROM
+          osm_landusages_gen
+        ORDER BY
+          area DESC
+      ) AS data
+
+- id: waterareas_gen
+  class: ""
+  geometry: polygon
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type, area
+        FROM
+          osm_waterareas_gen
+      ) AS data
+
+- id: waterareas
+  class: ""
+  geometry: polygon
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type, area
+        FROM
+          osm_waterareas
+      ) AS data
+
+- id: waterways
+  class: ""
+  geometry: linestring
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type
+        FROM
+          osm_waterways
+      ) AS data
+
+- id: waterways_gen
+  class: ""
+  geometry: linestring
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type
+        FROM
+          osm_waterways_gen
+      ) AS data
+
+- id: buildings
+  class: ""
+  geometry: polygon
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type
+        FROM
+          osm_buildings
+      ) AS data
+
+- id: roads_gen
+  class: ""
+  geometry: linestring
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type, ref,
+          CASE WHEN type='motorway' THEN 0 WHEN type='trunk' THEN 1 WHEN type='primary' THEN 2 ELSE 100 END AS rank
+        FROM
+          osm_roads_gen
+        WHERE
+          type IN ('motorway', 'trunk', 'primary', 'secondary', 'primary_link', 'motorway_link', 'trunk_link')
+          AND geometry && !bbox!
+        ORDER BY
+          rank DESC
+      ) AS data
+
+- id: railway
+  class: ""
+  geometry: linestring
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type, tunnel, bridge, ref, access, service, class
+        FROM
+          osm_railway
+        WHERE
+          service != 'spur' AND type NOT IN ('funicular', 'disused', 'tram', 'monorail')
+          AND geometry && !bbox!
+        ORDER BY
+          z_order
+      ) AS data
+
+- id: roads
+  class: ""
+  geometry: linestring
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, ref, tunnel, bridge,
+          CASE WHEN type='motorway' THEN 0 WHEN type='trunk' THEN 1 WHEN type='primary' THEN 2 ELSE 100 END AS rank,
+          CASE
+            WHEN type IN ('path', 'footway', 'bridleway', 'cycleway', 'steps', 'pedestrian') THEN 'path'
+            WHEN type IN ('track', 'service', 'living_street', 'unclassified', 'residential') THEN 'minor'
+            ELSE type
+          END AS type
+        FROM
+          osm_roads
+        ORDER BY
+          rank DESC
+      ) AS data
+
+- id: boundary
+  class: ""
+  geometry: polygon
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, admin_level
+          FROM
+            osm_admin
+          WHERE
+            admin_level > 2
+            AND admin_level < 10
+            AND geometry && !bbox!
+          ORDER BY
+            admin_level DESC
+        ) AS data
+
+- id: disputed
+  class: ""
+  geometry: "polygon"
+  <<: *extents84
+  Datasource:
+    file: data/disputed.json
+    type: geojson
+
+- id: itl_boundary
+  class: ""
+  geometry: "polygon"
+  <<: *extents84
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, 'no' AS maritime
+          FROM
+            itl_boundary
+        ) AS data
+
+- id: city
+  class: ""
+  geometry: point
+  <<: *extents84
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, COALESCE("name:{lang}", name) AS name, '{lang}' AS lang, capital, prio::int,
+            NULLIF(ldir, '') as ldir,
+            CASE WHEN type IN ('consulat', 'consulat_general', 'rp', 'bureau') THEN 'intermediate'
+                 WHEN type IN ('ambassade','hc') THEN 'embassy'
+                 WHEN type = 'capitale' THEN 'capital'
+                 ELSE type END AS type
+          FROM
+            city
+          ORDER BY
+            prio
+        ) AS data
+
+- id: country
+  class: ""
+  geometry: point
+  <<: *extents84
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, COALESCE("name:{lang}", name) AS name, '{lang}' AS lang, iso, prio::int, NULL as ldir, NULLIF(sov, '') as sov
+          FROM
+            country
+          ORDER BY
+            prio
+        ) AS data
+
+- id: place_low
+  class: ""
+  geometry: point
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, '{lang}' as lang, type, NULL as ldir,
+            CASE WHEN capital='yes' THEN 1 WHEN capital IN ('2','3','4') THEN 2 WHEN type='state' THEN 3 ELSE 100 END AS prio,
+            CASE WHEN capital='yes' THEN 1 WHEN capital IN ('2','3','4','5','6') THEN capital::INT ELSE 100 END AS capital,
+            COALESCE(NULLIF(name{lang}, ''), NULLIF(int_name, ''), name) as name
+          FROM
+            osm_places
+          WHERE
+            name != ''
+            AND type IN ('state', 'city', 'town')
+            AND geometry && !bbox!
+          ORDER BY
+            prio ASC, capital ASC, population DESC NULLS LAST
+        ) AS data
+
+- id: place
+  class: ""
+  geometry: point
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, '{lang}' as lang,
+            CASE WHEN type='city' THEN 1 WHEN type='town' THEN 2 ELSE 100 END AS prio,
+            CASE WHEN type IN ('hamlet', 'suburb', 'isolated_dwelling', 'neighbourhood', 'allotments', 'city_block') THEN 'minor' ELSE type END AS type,
+            CASE WHEN capital='yes' THEN 1 WHEN capital IN ('2','3','4','5','6') THEN capital::INT ELSE 100 END AS capital,
+            population,
+            COALESCE(NULLIF(name{lang}, ''), NULLIF(int_name, ''), name) as name
+          FROM
+            osm_places
+          ORDER BY
+            capital ASC, prio, population DESC NULLS LAST
+        ) AS data
+
+- id: station
+  class: poi
+  geometry: point
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            ST_Centroid(ST_Union(geometry)) AS geometry, '{lang}' as lang, type, station, COALESCE(NULLIF(short_name, ''), NULLIF("name{lang}", ''), name) AS name
+          FROM
+            osm_transport_points
+          WHERE
+            geometry && !bbox!
+          GROUP BY
+            type, station, name, short_name, "name{lang}"
+        ) AS data
+
+- id: poi
+  class: poi
+  geometry: point
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, '{lang}' as lang, type, COALESCE(NULLIF(name{lang}, ''), name) as name
+          FROM
+            osm_pois
+        ) AS data
+
+- id: aoi
+  class: poi
+  geometry: point
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, '{lang}' as lang, type, COALESCE(NULLIF(name{lang}, ''), name) as name
+          FROM
+            osm_aois
+        ) AS data
+
+- id: landuse_label
+  class: ""
+  geometry: "polygon"
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type, '{lang}' as lang, COALESCE(NULLIF(name{lang}, ''), name) as name
+        FROM
+          osm_landusages
+        WHERE
+          name != '' AND geometry && !bbox!
+        ORDER BY
+          area DESC
+      ) AS data
+
+- id: landuse_label_gen
+  class: ""
+  geometry: "polygon"
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type, '{lang}' as lang, COALESCE(NULLIF(name{lang}, ''), name) as name
+        FROM
+          osm_landusages_gen
+        WHERE
+          name != '' AND geometry && !bbox!
+      ) AS data
+
+- id: itl_boundary_label
+  class: ""
+  geometry: polygon
+  <<: *extents84
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, '2' AS admin_level, COALESCE("name:{lang}", name) AS name, '{lang}' AS lang
+          FROM
+            itl_boundary
+        ) AS data
+
+- id: boundary_label_low
+  class: ""
+  geometry: polygon
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, admin_level, '{lang}' as lang, COALESCE(NULLIF(name{lang}, ''), name) as name
+          FROM
+            osm_admin
+          WHERE
+            (admin_level = 3 OR admin_level = 4)
+            AND osm_id < 0
+            AND geometry && !bbox!
+          ORDER BY
+            admin_level DESC
+        ) AS data
+
+- id: boundary_label
+  class: ""
+  geometry: polygon
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, admin_level, '{lang}' as lang, COALESCE(NULLIF(name{lang}, ''), name) as name
+          FROM
+            osm_admin
+          WHERE
+            admin_level > 2
+            AND admin_level < 10
+            AND geometry && !bbox!
+          ORDER BY
+            admin_level DESC
+        ) AS data
+
+- id: road_label
+  class: ""
+  geometry: point
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, ref, CHAR_LENGTH(ref) AS reflen, '{lang}' as lang,
+            CASE type WHEN 'motorway' THEN 1 WHEN 'trunk' THEN 2 WHEN 'primary' THEN 3 ELSE 10 END AS prio,
+            CASE
+              WHEN type IN ('path', 'footway', 'bridleway', 'cycleway', 'steps', 'pedestrian') THEN 'path'
+              WHEN type IN ('track', 'service', 'living_street', 'unclassified', 'residential') THEN 'minor'
+              ELSE type
+            END AS type,
+            COALESCE(NULLIF(name{lang}, ''), name) as name
+          FROM
+            osm_roads
+          WHERE
+            (name != '' OR ref != '') AND geometry && !bbox!
+          ORDER BY
+            prio
+        ) AS data
+
+- id: housenumber
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, housenumber,
+          CASE WHEN housenumber ~ E'^\\d+$' AND (mod(housenumber::bigint, 5) = 0 OR housenumber::bigint = 1) THEN true ELSE false END AS mod5
+        FROM
+          osm_housenumbers
+      UNION
+        SELECT
+          geometry, housenumber AS housenumber,
+          CASE WHEN housenumber ~ E'^\\d+$' AND (mod(housenumber::bigint, 5) = 0 OR housenumber::bigint = 1) THEN true ELSE false END AS mod5
+        FROM
+          osm_housenumbers_area
+      ) AS data
+
+- id: waterway_label
+  class: ""
+  geometry: linestring
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type, COALESCE(NULLIF(name{lang}, ''), name) as name
+        FROM
+          osm_waterways
+        WHERE
+          name!='' AND geometry && !bbox!
+      ) AS data
+
+- id: waterway_label_low
+  class: ""
+  geometry: linestring
+  <<: *extents
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, type, COALESCE(NULLIF(name{lang}, ''), name) as name
+        FROM
+          osm_waterways_gen
+        WHERE
+          name!='' AND geometry && !bbox!
+      ) AS data
