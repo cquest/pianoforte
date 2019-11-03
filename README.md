@@ -97,10 +97,12 @@ of the project, see below.
 
 - download coastline data
 
-        wget https://osmdata.openstreetmap.de/download/simplified-land-polygons-complete-3857.zip
-        unzip simplified-land-polygons-complete-3857.zip
-        wget https://osmdata.openstreetmap.de/download/land-polygons-split-3857.zip
-        unzip land-polygons-split-3857.zip
+        cd data
+        wget -N https://osmdata.openstreetmap.de/download/simplified-land-polygons-complete-3857.zip
+        unzip -jo simplified-land-polygons-complete-3857.zip
+        wget -N https://osmdata.openstreetmap.de/download/land-polygons-split-3857.zip
+        unzip -jo land-polygons-split-3857.zip
+        cd -
 
 - import OSM data
 
