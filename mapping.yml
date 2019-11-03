@@ -47,7 +47,8 @@ tables:
     mapping:
       landuse: [park, forest, residential, retail, commercial, industrial, railway,
         cemetery, grass, farmyard, farm, farmland, orchard, vineyard, wood, meadow,
-        village_green, recreation_ground, allotments, quarry, landfill, nature_reserve]
+        village_green, recreation_ground, allotments, quarry, landfill, nature_reserve,
+        construction, brownfield, greenfield]
       leisure: [park, garden, golf_course, sports_centre, pitch, track]
       natural: [wood, land, desert, grassland, sand, heath, beach, wetland, scrub]
       amenity: [college, school, university, parking, hospital, embassy]
@@ -104,14 +105,25 @@ tables:
     - {key: access, name: access, type: string}
     - {key: service, name: service, type: string}
     - {key: null, name: class, type: mapping_key}
+    - {name: construction, type: string}
     filter:
       reject:
         area: yes
     mapping:
       railway: [rail, tram, light_rail, subway, narrow_gauge, preserved, funicular,
-        monorail, disused]
+        monorail, disused, construction]
     type: linestring
   roads:
+    type: linestring      
+    mapping:
+      highway: [motorway, motorway_link, trunk, trunk_link, primary, primary_link,
+        secondary, secondary_link, tertiary, tertiary_link, road, path, track,
+        service, footway, bridleway, cycleway, steps, pedestrian, living_street,
+        unclassified, residential, raceway, construction]
+      man_made: [pier, groyne]
+    filter:
+      reject:
+        area: yes
     columns:
     - {key: null, name: osm_id, type: id}
     - {key: null, name: geometry, type: geometry}
@@ -127,17 +139,14 @@ tables:
     - {key: layer, name: z_order, type: wayzorder}
     - {key: access, name: access, type: string}
     - {key: service, name: service, type: string}
+    - {name: maxheight, type: string}
+    - {name: maxwidth, type: string}
+    - {name: maxlength, type: string}
+    - {name: maxaxleload, type: string}
+    - {name: hgv, type: string}
+    - {name: goods, type: string}
+    - {name: hazmat, type: string}
     - {key: null, name: class, type: mapping_key}
-    filte:
-      reject:
-        area: yes
-    mapping:
-      highway: [motorway, motorway_link, trunk, trunk_link, primary, primary_link,
-        secondary, secondary_link, tertiary, tertiary_link, road, path, track,
-        service, footway, bridleway, cycleway, steps, pedestrian, living_street,
-        unclassified, residential, raceway]
-      man_made: [pier, groyne]
-    type: linestring
   transport_points:
     columns:
     - {key: null, name: osm_id, type: id}
