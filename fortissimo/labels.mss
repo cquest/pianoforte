@@ -31,6 +31,8 @@
   }
 }
 
+#openaddresses[zoom>=17][zoom<18][mod5=true],
+#openaddresses[zoom>=18],
 #housenumber[zoom>=17][zoom<19][mod5=true],
 #housenumber[zoom>=19] {
   text-name: '[housenumber]';
