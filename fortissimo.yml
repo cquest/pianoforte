@@ -408,7 +408,7 @@ Layer:
     <<: *db
     table: |-
       ( SELECT
-          geometry, type, '{lang}' as lang, COALESCE(NULLIF(name{lang}, ''), name) as name
+          geometry, type, '{lang}' as lang, COALESCE(NULLIF(name{lang}, ''), name) as name, area
         FROM
           osm_landusages
         WHERE
