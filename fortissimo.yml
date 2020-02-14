@@ -383,6 +383,23 @@ Layer:
             st_area(geometry) DESC
         ) AS data
 
+- id: sirene
+  geometry: point
+  <<: *extents84
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, coalesce(NULLIF(enseigne1etablissement,''), NULLIF(denominationusuelleetablissement,''), NULLIF(sigleunitelegale,''),'') as name
+          FROM
+            sirene_transport
+          WHERE
+            trancheeffectifsunitelegale NOT IN ('00','NN')
+            AND coalesce(NULLIF(enseigne1etablissement,''), NULLIF(denominationusuelleetablissement,''), NULLIF(sigleunitelegale,''),'') != ''
+          ORDER BY
+            trancheeffectifsunitelegale DESC
+        ) AS data
+ 
 - id: landuse_label
   class: ""
   geometry: "polygon"
