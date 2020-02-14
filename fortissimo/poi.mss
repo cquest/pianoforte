@@ -88,3 +88,51 @@
   text-clip: false;
   text-character-spacing: 0;
 }
+
+
+#aoi::simple[type='warehouse'][zoom>=14],
+#aoi::simple[type='industrial'][zoom>=14],
+#aoi::simple[type='commercial'][zoom>=15],
+#aoi::simple[type='building_retail'][zoom>=14],
+#aoi::simple[type='mall'][zoom>=14],
+#aoi::simple[type='supermarket'][zoom>=15],
+#aoi::simple[type='doityourself'][zoom>=15],
+#aoi::simple[type='garden_centre'][zoom>=15],
+#aoi::simple[type=~'buildin.*'][zoom>=15][area>8000],
+#aoi::simple[type=~'buildin.*'][zoom>=16] {
+  text-name: '[name]';
+  text-face-name: @light;
+  text-size: 11;
+  [zoom>=17] {
+    text-size: 12;
+  }
+  text-wrap-width: 60;
+  text-fill: @poi_text;
+  text-halo-fill: @halo;
+  text-halo-radius: 1.5;
+  text-label-position-tolerance: 18;
+  text-avoid-edges: true;
+  text-clip: false;
+  text-character-spacing: 0;
+}
+
+#sirene [zoom>=14][name!=''] {
+  text-name: '[name]';
+  text-face-name: @medium;
+  text-size: 11;
+  [zoom>=17] {
+    text-size: 12;
+  }
+  text-wrap-width: 60;
+  text-fill: darken(@industrial,40%);
+  text-halo-fill: @halo;
+  text-dy: -6;
+  text-placement: point;
+  text-halo-radius: 2;
+  text-avoid-edges: true;
+  text-clip: false;
+  text-character-spacing: 0;
+  marker-width: 6;
+  marker-fill: darken(@industrial,40%);
+  marker-line-width: 0;
+}
