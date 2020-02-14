@@ -208,6 +208,7 @@ tables:
       office: [government]
       tourism: [information, museum]
       aeroway: [aerodrome]
+      shop: [mall, supermarket, doityourself, garden_centre]
     type: point
   aois:
     fields:
@@ -224,6 +225,7 @@ tables:
       office: [government]
       tourism: [information, museum]
       aeroway: [aerodrome]
+      shop: [mall, supermarket, doityourself, garden_centre]
     type: polygon
   housenumbers:
     columns:
