@@ -72,7 +72,7 @@
             'Unifont Medium';
 
 Map {
-  background-color: @water;
+  background-color: @land;
   buffer-size: @buffer;
   font-directory: url(./fonts);
 }
