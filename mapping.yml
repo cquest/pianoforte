@@ -139,13 +139,14 @@ tables:
     - {key: layer, name: z_order, type: wayzorder}
     - {key: access, name: access, type: string}
     - {key: service, name: service, type: string}
-    - {name: maxheight, type: string}
-    - {name: maxwidth, type: string}
-    - {name: maxlength, type: string}
-    - {name: maxaxleload, type: string}
-    - {name: hgv, type: string}
-    - {name: goods, type: string}
-    - {name: hazmat, type: string}
+    - {key: maxheight, name: maxheight, type: string}
+    - {key: maxwidth, name: maxwidth, type: string}
+    - {key: maxlength, name: maxlength, type: string}
+    - {key: maxaxleload, name: maxaxleload, type: string}
+    - {key: maxweight, name: maxweight, type: string}
+    - {key: hgv, name: hgv, type: string}
+    - {key: goods, name: goods, type: string}
+    - {key: hazmat, name: hazmat, type: string}
     - {key: null, name: class, type: mapping_key}
   transport_points:
     columns:
