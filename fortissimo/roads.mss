@@ -28,10 +28,14 @@
 }
 
 #roads::simple[type='minor'][zoom>=13][zoom<15],
-#roads::simple[type='tertiary'][zoom>=12][zoom<15],
-#roads::simple[type='secondary'][zoom>=12][zoom<14] {
+#roads::simple[type='tertiary'][zoom>=11][zoom<15],
+#roads::simple[type='secondary'][zoom>=11][zoom<14] {
   line-color: @road_fill;
-  line-width: 1.2;
+  [type='secondary']
+  {
+    line-width: 1.7;
+  }
+  line-width: 1;
   [type='minor'] {
     line-width: 0.5;
   }
@@ -87,6 +91,7 @@
     line-width: 0.5;
   }
 }
+
 #roads[type='path'][zoom>=15],
 #roads[type='minor'][zoom>=15],
 #roads[type='secondary'][zoom>=14],
@@ -204,3 +209,4 @@
     text-size: 14;
   }
 }
+
