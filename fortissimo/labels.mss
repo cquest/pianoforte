@@ -5,7 +5,8 @@
 #landuse_label_gen[type='industrial'][zoom=12],
 #landuse_label_gen[type='retail'][zoom=12],
 #landuse_label_gen[type='wood'][zoom=12],
-#landuse_label_gen[zoom>=13][zoom<17],
+#landuse_label_gen[zoom>=13][zoom<15],
+#landuse_label[zoom>=15][area>50000],
 #landuse_label[zoom>=17] {
   text-name: '[name]';
   [lang='fr'] {
