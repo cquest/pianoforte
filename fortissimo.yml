@@ -508,6 +508,7 @@ Layer:
         ) AS data
 
 - id: housenumber
+  status: off
   <<: *extents
   Datasource:
     <<: *db
@@ -523,6 +524,18 @@ Layer:
           CASE WHEN housenumber ~ E'^\\d+$' AND (mod(housenumber::bigint, 5) = 0 OR housenumber::bigint = 1) THEN true ELSE false END AS mod5
         FROM
           osm_housenumbers_area
+      ) AS data
+
+- id: openaddresses
+  <<: *extents84
+  Datasource:
+    <<: *db
+    table: |-
+      ( SELECT
+          geometry, number as housenumber,
+          CASE WHEN number ~ E'^\\d+$' AND (mod(number::bigint, 5) = 0 OR number::bigint = 1) THEN true ELSE false END AS mod5
+        FROM
+          openaddresses
       ) AS data
 
 - id: waterway_label
