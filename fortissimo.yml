@@ -368,10 +368,19 @@ Layer:
   Datasource:
     <<: *db
     table: |-
-        ( SELECT
-            geometry, '{lang}' as lang, type, COALESCE(NULLIF(name{lang}, ''), name) as name
+        ( SELECT * FROM (
+          SELECT
+            geometry, '{lang}' as lang, type, COALESCE(NULLIF(name{lang}, ''), name) as name, st_area(geometry) as area
           FROM
             osm_aois
+          UNION
+          SELECT
+            geometry, '{lang}' as lang, 'building_' || replace(type,'yes','building') as type, COALESCE(NULLIF(name{lang}, ''), name) as name, st_area(geometry) as area
+          FROM
+            osm_buildings
+          ) s
+          ORDER BY
+            st_area(geometry) DESC
         ) AS data
 
 - id: landuse_label
