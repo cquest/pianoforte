@@ -34,12 +34,12 @@ db: &db
 
 Stylesheet:
 - base.mss
-- forte/base.mss
+- fortissimo/base.mss
 - admin.mss
-- forte/roads.mss
+- fortissimo/roads.mss
 - labels.mss
-- forte/labels.mss
-- forte/poi.mss
+- fortissimo/labels.mss
+- fortissimo/poi.mss
 
 Layer:
 
