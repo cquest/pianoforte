@@ -191,7 +191,7 @@
   polygon-fill: @building;
   [zoom>=15] {
       line-color: @building_case;
-      [type!="yes"] {
+      [type!="yes"][type!="house"][type!="residential"] {
         polygon-fill: darken(@building, 5);
         line-color: darken(@building_case, 10);
       }
