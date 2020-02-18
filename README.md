@@ -1,9 +1,10 @@
-# Piano-Forte
+# Piano-Forte + Fortissimo
 
 A world map in two flavours:
 
 - Piano, when you need a very light background to put data on top of if
 - Forte, when you need a generic purpose map
+- Fortissimo, a more thematic style
 
 And three languages: French, English, Arabic.
 
@@ -54,6 +55,10 @@ Run kosmtik with forte:
 Or with piano:
 
     kosmtik serve piano.yml
+
+Or with fortissimo:
+
+    kosmtik serve fortissimo.yml
 
 
 ## Production deployment
