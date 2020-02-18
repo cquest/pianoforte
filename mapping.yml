@@ -162,6 +162,7 @@ tables:
     mapping:
       highway: [bus_stop]
       railway: [station, halt, tram_stop, crossing, level_crossing, subway_entrance]
+      amenity: [bus_station]
     type: point
   waterareas:
     columns:
@@ -202,11 +203,15 @@ tables:
     - {key: 'name:ar', name: namear, type: string}
     - {key: 'name:en', name: nameen, type: string}
     - {key: null, name: type, type: mapping_value}
+    - {key: 'operator', name: operator, type: string}
     mapping:
       amenity: [university, school, library, hospital, fire_station, police, townhall,
-                embassy, arts_centre, library, theatre, courthouse]
+                embassy, arts_centre, library, theatre, courthouse,
+                fast_food, restaurant, pharmacy, fuel, bank, clinic, nursing_home,
+                social_facility, conference_centre, place_of_worship,
+                post_office, post_depot]
       office: [government]
-      tourism: [information, museum]
+      tourism: [information, museum, hotel]
       aeroway: [aerodrome]
       shop: [mall, supermarket, doityourself, garden_centre]
     type: point
@@ -221,9 +226,12 @@ tables:
     - {key: null, name: type, type: mapping_value}
     mapping:
       amenity: [university, school, library, hospital, fire_station, police, townhall,
-                embassy, arts_centre, library, theatre, courthouse]
+                embassy, arts_centre, library, theatre, courthouse,
+                fast_food, restaurant, pharmacy, fuel, bank, clinic, nursing_home,
+                social_facility, conference_centre, place_of_worship,
+                post_office, post_depot]
       office: [government]
-      tourism: [information, museum]
+      tourism: [information, museum, hotel]
       aeroway: [aerodrome]
       shop: [mall, supermarket, doityourself, garden_centre]
     type: polygon
