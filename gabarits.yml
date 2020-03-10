@@ -36,7 +36,6 @@ Stylesheet:
 - gabarits/base.mss
 
 Layer:
-
 - id: gabarits
   class: ""
   geometry: linestring
