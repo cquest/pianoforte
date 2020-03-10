@@ -19,6 +19,26 @@
   }
 }
 
+#aoi[type='restaurant'][zoom>=17],
+#poi[type='restaurant'][zoom>=17],
+#aoi[type='hotel'][zoom>=17],
+#poi[type='hotel'][zoom>=17],
+#aoi[type='pharmacy'][zoom>=17],
+#poi[type='pharmacy'][zoom>=17],
+#aoi[type='bank'][zoom>=17],
+#poi[type='bank'][zoom>=17],
+#aoi[type='fast_food'][zoom>=17],
+#poi[type='fast_food'][zoom>=17],
+#aoi[type='fuel'][zoom>=16],
+#poi[type='fuel'][zoom>=16],
+#aoi[type='post_office'][zoom>=15],
+#poi[type='post_office'][zoom>=15] {
+    marker-file: url('icon/poi/[type]-15.svg');
+    [zoom<=15] {
+      marker-file: url('icon/poi/[type]-11.svg');
+    }
+}
+
 #aoi[type='courthouse'][zoom>=17],
 #poi[type='courthouse'][zoom>=17],
 #aoi[type='embassy'][zoom>=17],
@@ -45,6 +65,20 @@
     }
 }
 
+#aoi[type='restaurant'][zoom>=17],
+#poi[type='restaurant'][zoom>=17],
+#aoi[type='hotel'][zoom>=17],
+#poi[type='hotel'][zoom>=17],
+#aoi[type='pharmacy'][zoom>=17],
+#poi[type='pharmacy'][zoom>=17],
+#aoi[type='bank'][zoom>=17],
+#poi[type='bank'][zoom>=17],
+#aoi[type='fast_food'][zoom>=17],
+#poi[type='fast_food'][zoom>=17],
+#aoi[type='fuel'][zoom>=17],
+#poi[type='fuel'][zoom>=17],
+#aoi[type='post_office'][zoom>=17],
+#poi[type='post_office'][zoom>=17],
 #aoi::label[type='courthouse'][zoom>=17],
 #poi::label[type='courthouse'][zoom>=17],
 #aoi::label[type='school'][zoom>=17],
