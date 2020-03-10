@@ -150,14 +150,17 @@
   text-character-spacing: 0;
 }
 
-#sirene [zoom>=14][name!=''] {
+#sirene [zoom>=14][name!=''],
+#sirene17 [zoom=17][name!=''],
+#sirene_all [zoom>=18][name!='']
+ {
   text-name: '[name]';
   text-face-name: @medium;
   text-size: 11;
   [zoom>=17] {
     text-size: 12;
   }
-  text-wrap-width: 60;
+  text-wrap-width: 100;
   text-fill: darken(@industrial,40%);
   text-halo-fill: @halo;
   text-dy: -6;

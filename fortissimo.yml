@@ -384,6 +384,7 @@ Layer:
         ) AS data
 
 - id: sirene
+  status: off
   geometry: point
   <<: *extents84
   Datasource:
