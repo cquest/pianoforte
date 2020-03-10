@@ -1,0 +1,100 @@
+scale: 1
+metatile: 8
+name: "sirene"
+bounds: &world
+  - -180
+  - -85.05112877980659
+  - 180
+  - 85.05112877980659
+center:
+  - 2.3427
+  - 48.8662
+  - 5
+format: "png"
+interactivity: false
+minzoom: 14
+maxzoom: 18
+srs: &merc "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over"
+extents: &extents
+  extent: *world
+  srs-name: "900913"
+  srs: *merc
+extents84: &extents84
+  extent: *world
+  srs-name: "WGS84"
+  srs: "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+db: &db
+  dbname: tilery
+  geometry_field: geometry
+  type: postgis
+  extent: -20037508,-19929239,20037508,19929239
+  password: null
+  user: tilery
+  host: ''
+
+Stylesheet:
+- base.mss
+- fortissimo/base.mss
+- fortissimo/poi.mss
+
+Layer:
+- id: sirene
+  geometry: point
+  <<: *extents84
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry, coalesce(NULLIF(enseigne1etablissement,''), NULLIF(denominationusuelleetablissement,''), NULLIF(sigleunitelegale,''),'') as name
+          FROM
+            sirene_transport
+          WHERE
+            trancheeffectifsunitelegale NOT IN ('00','NN')
+            AND coalesce(NULLIF(enseigne1etablissement,''), NULLIF(denominationusuelleetablissement,''), NULLIF(sigleunitelegale,''),'') != ''
+          ORDER BY
+            trancheeffectifsunitelegale DESC
+        ) AS data
+ 
+- id: sirene17
+  geometry: point
+  <<: *extents84
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry,
+            string_agg(coalesce(NULLIF(enseigne1etablissement,''), NULLIF(denominationusuelleetablissement,''), NULLIF(denominationunitelegale,''), NULLIF(sigleunitelegale,''),''),' / ') as name
+          FROM
+            sirene_etablissements et
+          JOIN sirene_entreprises en ON (en.siren=et.siren)
+          WHERE
+            etatadministratifunitelegale = 'A' AND etatadministratifetablissement = 'A'
+            AND activiteprincipaleetablissement ~ '^(10|58|59|60|61|62|63)' AND activiteprincipaleunitelegale ~ '^(10|58|59|60|61|62|63)'
+            AND geo_type = 'housenumber'
+            AND trancheeffectifsunitelegale NOT IN ('00','NN')
+            AND coalesce(NULLIF(enseigne1etablissement,''), NULLIF(denominationusuelleetablissement,''), NULLIF(denominationunitelegale,''), NULLIF(sigleunitelegale,''),'') != ''
+          GROUP BY
+            geometry
+        ) AS data
+
+- id: sirene_all
+  geometry: point
+  <<: *extents84
+  Datasource:
+    <<: *db
+    table: |-
+        ( SELECT
+            geometry,
+            string_agg(coalesce(NULLIF(enseigne1etablissement,''), NULLIF(denominationusuelleetablissement,''), NULLIF(denominationunitelegale,''), NULLIF(sigleunitelegale,''),''),' / ') as name
+          FROM
+            sirene_etablissements et
+          JOIN sirene_entreprises en ON (en.siren=et.siren)
+          WHERE
+            etatadministratifunitelegale = 'A' AND etatadministratifetablissement = 'A'
+            AND activiteprincipaleetablissement !~ '^(81.10|68.20|94)' AND activiteprincipaleunitelegale !~ '^(81.10|68.20|94)'
+            AND geo_type = 'housenumber'
+            AND trancheeffectifsunitelegale NOT IN ('00','NN')
+            AND coalesce(NULLIF(enseigne1etablissement,''), NULLIF(denominationusuelleetablissement,''), NULLIF(denominationunitelegale,''), NULLIF(sigleunitelegale,''),'') != ''
+          GROUP BY
+            geometry
+        ) AS data

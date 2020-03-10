@@ -567,27 +567,3 @@ Layer:
         WHERE
           name!='' AND geometry && !bbox!
       ) AS data
-
-- id: gabarits
-  class: ""
-  geometry: linestring
-  <<: *extents
-  Datasource:
-    <<: *db
-    table: |-
-      ( SELECT
-          geometry, ref, maxheight, maxwidth, maxlength, maxaxleload, hgv, goods, hazmat, maxweight,
-          CASE WHEN type='motorway' THEN 0 WHEN type='trunk' THEN 1 WHEN type='primary' THEN 2 ELSE 100 END AS rank,
-          CASE
-            WHEN type IN ('path', 'footway', 'bridleway', 'cycleway', 'steps', 'pedestrian') THEN 'path'
-            WHEN type IN ('track', 'service', 'living_street', 'unclassified', 'residential') THEN 'minor'
-            ELSE type
-          END AS type
-        FROM
-          osm_roads
-        WHERE
-          type ~ '^(motorway|trunk|primary|secondary|tertiary|unclassified|residential)'
-          AND coalesce(maxheight, maxwidth, maxaxleload, hgv, goods, hazmat, maxweight, '') != ''
-        ORDER BY
-          rank DESC
-      ) AS data
